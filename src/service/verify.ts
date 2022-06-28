@@ -25,10 +25,10 @@ export class VerifyService extends BaseService {
   async getImgCaptcha(
     captcha: LoginImageCaptchaDto
   ): Promise<IImageCaptchaResult> {
-    const svg = svgCaptcha.create({
+    const svg = svgCaptcha.createMathExpr({
       size: 4,
-      color: true,
-      noise: 4,
+      color: false,
+      noise: 1,
       width: isEmpty(captcha.width) ? 100 : captcha.width,
       height: isEmpty(captcha.height) ? 50 : captcha.width,
     });
