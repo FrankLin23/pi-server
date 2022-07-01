@@ -9,3 +9,11 @@ export class LoginInfoDto {
   captchaCode: string;
   captchaId: string;
 }
+
+export class UpdateInfoDto {
+  username: string | null;
+  nickname: string | null;
+  email: string | null;
+  phone: string | null;
+  remark: string | null;
+}

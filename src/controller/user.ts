@@ -1,8 +1,10 @@
-import { ALL, Body, Controller, Inject, Post } from '@midwayjs/decorator';
+import { ALL, Body, Controller, Get, Inject, Post } from '@midwayjs/decorator';
+import { Context } from 'egg';
 import { isEmpty } from 'lodash';
 import { res } from '../common/utils';
-import { LoginInfoDto } from '../dto/verity';
+import { LoginInfoDto, UpdateInfoDto } from '../dto/verity';
 import { ResOp } from '../interface';
+import { UserService } from '../service/user';
 import { VerifyService } from '../service/verify';
 import { BaseController } from './base';
 
@@ -10,6 +12,12 @@ import { BaseController } from './base';
 export class UserController extends BaseController {
   @Inject()
   verifyService: VerifyService;
+
+  @Inject()
+  ctx: Context;
+
+  @Inject()
+  userService: UserService;
 
   @Post('/login')
   async login(@Body(ALL) loginInfo: LoginInfoDto): Promise<ResOp> {
@@ -31,6 +39,41 @@ export class UserController extends BaseController {
       data: {
         token: sign,
       },
+    });
+  }
+
+  @Get('/me')
+  async getCurrentUser(): Promise<ResOp> {
+    const token = this.ctx.header.authorization;
+    if (!token) {
+      return res({ code: 11002 });
+    }
+    const result = await this.verifyService.verifyToken(token);
+    if (isEmpty(result)) {
+      return res({ code: 11002 });
+    }
+    const user = await this.userService.getUserById(result.sign.uid);
+    const currentUser = {
+      id: user.id,
+      username: user.username,
+      nickname: user.nickname,
+      headImg: user.headImg,
+      email: user.email,
+      phone: user.phone,
+      remark: user.remark,
+    };
+    return res({ data: currentUser });
+  }
+
+  @Post('/update')
+  async updateUserInfo(@Body(ALL) userInfo: UpdateInfoDto) {
+    const user = await this.userService.getUserByUsername(userInfo.username);
+    if (isEmpty(user)) {
+      return res({ code: 10014 });
+    }
+    const result = await this.userService.updateUserInfo(userInfo, user);
+    return res({
+      data: result,
     });
   }
 }

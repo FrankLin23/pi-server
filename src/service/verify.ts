@@ -84,4 +84,8 @@ export class VerifyService extends BaseService {
     await this.getRedis().set(`admin:token:${user!.id}`, jwtSign);
     return jwtSign;
   }
+
+  async verifyToken(token: string) {
+    return await this.utils.jwtVerify(token);
+  }
 }
