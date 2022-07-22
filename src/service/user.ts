@@ -9,6 +9,11 @@ export class UserService {
   @InjectEntityModel(User)
   userModel: Repository<User>;
 
+  /**
+   * 根据id查找用户
+   * @param id
+   * @returns
+   */
   async getUserById(id: number): Promise<User | null> {
     return await this.userModel.findOne({
       where: {
@@ -17,6 +22,11 @@ export class UserService {
     });
   }
 
+  /**
+   * 根据用户名查找用户
+   * @param username
+   * @returns
+   */
   async getUserByUsername(username: string): Promise<User | null> {
     return await this.userModel.findOne({
       where: {
@@ -25,7 +35,13 @@ export class UserService {
     });
   }
 
-  async updateUserInfo(userInfo: UpdateInfoDto, user: User) {
+  /**
+   * 更新用户信息
+   * @param userInfo
+   * @param user
+   * @returns
+   */
+  async updateUserInfo(userInfo: UpdateInfoDto, user: User): Promise<User> {
     user.username = userInfo.username;
     user.nickname = userInfo.nickname;
     user.email = userInfo.email;

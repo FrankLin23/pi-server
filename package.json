@@ -13,6 +13,7 @@
     "@midwayjs/orm": "^3.3.5",
     "@midwayjs/passport": "^3.3.5",
     "@midwayjs/redis": "^3.3.5",
+    "@midwayjs/swagger": "^3.4.3",
     "@midwayjs/web": "^3.0.0",
     "cache-manager": "^3.6.1",
     "crypto-js": "^4.1.1",
@@ -43,6 +44,7 @@
     "egg-mock": "^3.26.0",
     "jest": "^26.4.0",
     "mwts": "^1.0.5",
+    "swagger-ui-dist": "^4.13.0",
     "ts-jest": "^26.2.0",
     "typescript": "^4.0.0"
   },

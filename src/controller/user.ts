@@ -1,8 +1,7 @@
 import { ALL, Body, Controller, Get, Inject, Post } from '@midwayjs/decorator';
-import { Context } from 'egg';
 import { isEmpty } from 'lodash';
 import { res } from '../common/utils';
-import { LoginInfoDto, UpdateInfoDto } from '../dto/verity';
+import { UpdateInfoDto } from '../dto/verity';
 import { ResOp } from '../interface';
 import { UserService } from '../service/user';
 import { VerifyService } from '../service/verify';
@@ -11,37 +10,15 @@ import { BaseController } from './base';
 @Controller('/user')
 export class UserController extends BaseController {
   @Inject()
-  verifyService: VerifyService;
-
-  @Inject()
-  ctx: Context;
-
-  @Inject()
   userService: UserService;
 
-  @Post('/login')
-  async login(@Body(ALL) loginInfo: LoginInfoDto): Promise<ResOp> {
-    const isSuccess = await this.verifyService.checkImgCaptcha(
-      loginInfo.captchaId,
-      loginInfo.captchaCode
-    );
-    if (!isSuccess) {
-      return res({ code: 10002 });
-    }
-    const sign = await this.verifyService.getLoginSign(
-      loginInfo.username,
-      loginInfo.password
-    );
-    if (isEmpty(sign)) {
-      return res({ code: 10003 });
-    }
-    return res({
-      data: {
-        token: sign,
-      },
-    });
-  }
+  @Inject()
+  verifyService: VerifyService;
 
+  /**
+   * 获取当前用户信息接口
+   * @returns
+   */
   @Get('/me')
   async getCurrentUser(): Promise<ResOp> {
     const token = this.ctx.header.authorization;
@@ -65,8 +42,13 @@ export class UserController extends BaseController {
     return res({ data: currentUser });
   }
 
+  /**
+   * 更新用户信息接口
+   * @param userInfo
+   * @returns
+   */
   @Post('/update')
-  async updateUserInfo(@Body(ALL) userInfo: UpdateInfoDto) {
+  async updateUserInfo(@Body(ALL) userInfo: UpdateInfoDto): Promise<ResOp> {
     const user = await this.userService.getUserByUsername(userInfo.username);
     if (isEmpty(user)) {
       return res({ code: 10014 });

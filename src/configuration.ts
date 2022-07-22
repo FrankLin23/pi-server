@@ -9,9 +9,10 @@ import * as crossDomain from '@midwayjs/cross-domain';
 import * as redis from '@midwayjs/redis';
 import * as passport from '@midwayjs/passport';
 import * as jwt from '@midwayjs/jwt';
+import * as swagger from '@midwayjs/swagger';
 
 @Configuration({
-  imports: [egg, orm, cache, crossDomain, redis, passport, jwt],
+  imports: [egg, orm, cache, crossDomain, redis, passport, jwt, swagger],
   importConfigs: [join(__dirname, './config')],
 })
 export class ContainerLifeCycle implements ILifeCycle {

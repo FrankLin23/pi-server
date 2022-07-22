@@ -39,7 +39,7 @@ export class VerifyService extends BaseService {
       id: this.utils.gennerateUUID(),
     };
     await this.getRedis().set(
-      `admin:captcha:img:${result.id}`,
+      `captcha:img:${result.id}`,
       svg.text,
       'EX',
       60 * 10
@@ -54,18 +54,24 @@ export class VerifyService extends BaseService {
    * @returns
    */
   async checkImgCaptcha(id: string, code: string): Promise<boolean> {
-    const result = await this.getRedis().get(`admin:captcha:img:${id}`);
+    const result = await this.getRedis().get(`captcha:img:${id}`);
     if (isEmpty(result)) {
       return false;
     }
     if (code.toLocaleLowerCase() !== result!.toLocaleLowerCase()) {
       return false;
     }
-    await this.getRedis().del(`admin:captcha:img:${id}`);
+    await this.getRedis().del(`captcha:img:${id}`);
     return true;
   }
 
-  async getLoginSign(username: string, password: string) {
+  /**
+   * 获取token
+   * @param username
+   * @param password
+   * @returns
+   */
+  async getLoginSign(username: string, password: string): Promise<string> {
     const user = await this.userModel.findOne({
       where: {
         username: username,
@@ -85,7 +91,12 @@ export class VerifyService extends BaseService {
     return jwtSign;
   }
 
-  async verifyToken(token: string) {
+  /**
+   * 验证token
+   * @param token
+   * @returns
+   */
+  async verifyToken(token: string): Promise<any> {
     return await this.utils.jwtVerify(token);
   }
 }
